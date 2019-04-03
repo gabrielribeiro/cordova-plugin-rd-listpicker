@@ -183,7 +183,7 @@
     [buttons addObject:flexSpace];
     UILabel *label =[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 30)];
     [label setTextAlignment:NSTextAlignmentCenter];
-    [label setTextColor: (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) ? [UIColor blackColor] : [UIColor whiteColor]];
+    [label setTextColor: [UIColor whiteColor]];
     [label setFont: [UIFont boldSystemFontOfSize:16]];
     [label setBackgroundColor:[UIColor clearColor]];
     label.text = title;
@@ -207,6 +207,8 @@
     self.pickerView.showsSelectionIndicator = YES;
     self.pickerView.delegate = self;
     
+    self.pickerView.backgroundColor = UIColor.darkGrayColor;
+    
     // Define selected value
     if([options objectForKey:@"selectedValue"]) {
         NSString *selectedValue = [self getStringValue:[options objectForKey:@"selectedValue"]];
@@ -216,9 +218,9 @@
     
     // Initialize the View that should conain the toolbar and picker
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.viewSize.width, 260)];
-    if(NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) {
-        [view setBackgroundColor:[UIColor colorWithRed:0.97 green:0.97 blue:0.97 alpha:1.0]];
-    }
+//    if(NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) {
+//        [view setBackgroundColor:[UIColor colorWithRed:0.97 green:0.97 blue:0.97 alpha:1.0]];
+//    }
     [view addSubview: toolbar];
     
     //ios7 picker draws a darkened alpha-only region on the first and last 8 pixels horizontally, but blurs the rest of its background.  To make the whole popup appear to be edge-to-edge, we have to add blurring to the remaining left and right edges.
@@ -480,21 +482,21 @@
 }
 
 // Called by the picker view when it needs the view to use for a given row in a given component
-//- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
-//
-//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 2, pickerView.frame.size.width - 30, 44)];
-//
-//    [label setMinimumScaleFactor:0.75];
-//    label.adjustsFontSizeToFitWidth = YES;
-//    label.numberOfLines = 2;
-//    label.lineBreakMode = NSLineBreakByTruncatingTail;
-//    label.textAlignment = NSTextAlignmentCenter;
-//
-//    label.text = [[self.items objectAtIndex:row] objectForKey:@"text"];
-//    [label sizeToFit];
-//
-//    return label;
-//}
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
+
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 2, pickerView.frame.size.width - 30, 44)];
+
+    label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleTitle1];
+
+    label.lineBreakMode = NSLineBreakByTruncatingTail;
+    label.textAlignment = NSTextAlignmentCenter;
+    label.textColor = UIColor.whiteColor;
+
+    label.text = [[self.items objectAtIndex:row] objectForKey:@"text"];
+    [label sizeToFit];
+
+    return label;
+}
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component {
     return 48;
