@@ -43,10 +43,10 @@
     [[UILabel appearanceWhenContainedInInstancesOfClasses:@[[UIAlertController class]]] setAdjustsFontSizeToFitWidth:YES];
     [[UILabel appearanceWhenContainedInInstancesOfClasses:@[[UIAlertController class]]] setNumberOfLines:2];
     [[UILabel appearanceWhenContainedInInstancesOfClasses:@[[UIAlertController class]]] setLineBreakMode:NSLineBreakByTruncatingTail];
-
+    
     [[UIVisualEffectView appearanceWhenContainedInInstancesOfClasses:@[[UIAlertController class]]]
      setEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
-
+    
     [((UIView *)[NSClassFromString(@"_UIAlertControlleriOSActionSheetCancelBackgroundView")
                  appearance]) setSubviewsBackgroundColor:[UIColor colorWithWhite:0 alpha:0.333]];
 }
@@ -54,20 +54,20 @@
 - (void)showPicker:(CDVInvokedUrlCommand*)command {
     self.callbackId = command.callbackId;
     options = [command.arguments objectAtIndex:0];
-
+    
     title = [options objectForKey:@"title"] ?: nil;
     subtitle = [options objectForKey:@"subtitle"] ?: nil;
-
+    
     doneButtonLabel = [options objectForKey:@"doneButtonLabel"] ?: @"Done";
     cancelButtonLabel = [options objectForKey:@"cancelButtonLabel"] ?: @"Cancel";
     clearButtonLabel = [options objectForKey:@"clearButtonLabel"] ?: @"Clear";
-
+    
     style = [options objectForKey:@"style"] ?: @" ";
-
+    
     alignment = [options objectForKey:@"alignment"] ?: @"1";
-
+    
     selectedValue = [self getStringValue:[options objectForKey:@"selectedValue"] ?: @""];
-
+    
     self.items = [options objectForKey:@"items"];
     
     if ([style isEqualToString:@"spinning"] || self.items.count > 30) {
@@ -183,7 +183,7 @@
     [buttons addObject:flexSpace];
     UILabel *label =[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 30)];
     [label setTextAlignment:NSTextAlignmentCenter];
-    [label setTextColor: (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) ? [UIColor blackColor] : [UIColor whiteColor]];
+    [label setTextColor: [UIColor whiteColor]];
     [label setFont: [UIFont boldSystemFontOfSize:16]];
     [label setBackgroundColor:[UIColor clearColor]];
     label.text = title;
@@ -207,6 +207,8 @@
     self.pickerView.showsSelectionIndicator = YES;
     self.pickerView.delegate = self;
     
+    self.pickerView.backgroundColor = UIColor.darkGrayColor;
+    
     // Define selected value
     if([options objectForKey:@"selectedValue"]) {
         NSString *selectedValue = [self getStringValue:[options objectForKey:@"selectedValue"]];
@@ -216,9 +218,9 @@
     
     // Initialize the View that should conain the toolbar and picker
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.viewSize.width, 260)];
-    if(NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) {
-        [view setBackgroundColor:[UIColor colorWithRed:0.97 green:0.97 blue:0.97 alpha:1.0]];
-    }
+    //    if(NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) {
+    //        [view setBackgroundColor:[UIColor colorWithRed:0.97 green:0.97 blue:0.97 alpha:1.0]];
+    //    }
     [view addSubview: toolbar];
     
     //ios7 picker draws a darkened alpha-only region on the first and last 8 pixels horizontally, but blurs the rest of its background.  To make the whole popup appear to be edge-to-edge, we have to add blurring to the remaining left and right edges.
@@ -396,6 +398,9 @@
 #pragma mark - Results
 
 - (void)sendResults:(NSString *)selectedValue andIndex:(int)index {
+    [[UIVisualEffectView appearanceWhenContainedInInstancesOfClasses:@[[UIAlertController class]]]
+     setEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]];
+    
     [self.commandDelegate runInBackground:^{
         CDVPluginResult* pluginResult;
         
@@ -420,6 +425,9 @@
 }
 
 - (void)sendResultsFromPickerView:(UIPickerView *)pickerView withButtonIndex:(NSInteger)buttonIndex {
+    [[UIVisualEffectView appearanceWhenContainedInInstancesOfClasses:@[[UIAlertController class]]]
+     setEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]];
+    
     // Build returned result
     NSInteger selectedRow = [pickerView selectedRowInComponent:0];
     
@@ -480,24 +488,25 @@
 }
 
 // Called by the picker view when it needs the view to use for a given row in a given component
-//- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
-//
-//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 2, pickerView.frame.size.width - 30, 44)];
-//
-//    [label setMinimumScaleFactor:0.75];
-//    label.adjustsFontSizeToFitWidth = YES;
-//    label.numberOfLines = 2;
-//    label.lineBreakMode = NSLineBreakByTruncatingTail;
-//    label.textAlignment = NSTextAlignmentCenter;
-//
-//    label.text = [[self.items objectAtIndex:row] objectForKey:@"text"];
-//    [label sizeToFit];
-//
-//    return label;
-//}
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 2, pickerView.frame.size.width - 30, 48)];
+    
+    label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    
+    label.lineBreakMode = NSLineBreakByTruncatingTail;
+    label.textAlignment = NSTextAlignmentCenter;
+    label.numberOfLines = 2;
+    label.textColor = UIColor.whiteColor;
+    
+    label.text = [[self.items objectAtIndex:row] objectForKey:@"text"];
+    [label sizeToFit];
+    
+    return label;
+}
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component {
-    return 48;
+    return 64;
 }
 
 // Tell the picker the width of each row for a given component
